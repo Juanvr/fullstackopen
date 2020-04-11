@@ -7,22 +7,11 @@ const Header = ({text}) =>
 const Button = ({name, handleClick}) => 
   <button onClick ={handleClick}>{name}</button>;
 
-const Statistics = ({name, value}) => 
+const Statistic = ({name, value}) => 
 <p>{name + ': ' + value}</p>;
 
-
-
-
-const App = () => {
-  // save clicks of each button to own state
-  const [good, setGood] = useState(0)
-  const [neutral, setNeutral] = useState(0)
-  const [bad, setBad] = useState(0)
-
-  const addGood = () => setGood(good + 1);
-  const addNeutral = () => setNeutral(neutral + 1);
-  const addBad = () => setBad(bad + 1);
-
+const Statistics = ({good, neutral, bad}) => 
+{
   const sum = data => data.reduce((a,b) => a + b, 0);
   const average = (good, neutral, bad) => 
   {
@@ -38,6 +27,33 @@ const App = () => {
     return result;
   }
 
+  if (good + neutral + bad > 0){
+    return (
+      <div>
+      <Statistic name="good" value={good}/>
+      <Statistic name="neutral" value={neutral}/>
+      <Statistic name="bad" value={bad}/>
+      <Statistic name="all" value={sum([good, neutral, bad])}/>
+      <Statistic name="average" value={average(good, neutral, bad)}/>
+      <Statistic name="positive" value={pctgPositive(good, [good, neutral, bad]) + " %"}/>
+      </div>
+    )
+  }else {
+    return <span>No feedback given</span>
+  }
+}
+
+
+const App = () => {
+  // save clicks of each button to own state
+  const [good, setGood] = useState(0)
+  const [neutral, setNeutral] = useState(0)
+  const [bad, setBad] = useState(0)
+
+  const addGood = () => setGood(good + 1);
+  const addNeutral = () => setNeutral(neutral + 1);
+  const addBad = () => setBad(bad + 1);
+
   return (
     <div>
       <Header text="give feedback"/>
@@ -46,13 +62,8 @@ const App = () => {
       <Button name="bad" handleClick={addBad}/>
 
       <Header text="statistics"/>
-      <Statistics name="good" value={good}/>
-      <Statistics name="neutral" value={neutral}/>
-      <Statistics name="bad" value={bad}/>
-      <Statistics name="all" value={sum([good, neutral, bad])}/>
-      <Statistics name="average" value={average(good, neutral, bad)}/>
-      <Statistics name="positive" value={pctgPositive(good, [good, neutral, bad]) + " %"}/>
-    </div>
+      <Statistics good={good} neutral={neutral} bad={bad} />
+      </div>
   )
 }
 
