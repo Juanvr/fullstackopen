@@ -85,6 +85,8 @@ const App = () => {
     setPoints(newPoints);
   }
 
+  const getMaxPointsIndex = (points) => points.reduce((acc,current,index,array) => current > array[acc]? index: acc,0);
+
   const addGood = () => setGood(good + 1);
   const addNeutral = () => setNeutral(neutral + 1);
   const addBad = () => setBad(bad + 1);
@@ -102,11 +104,17 @@ const App = () => {
       <br/>
       <br/>
       <br/>
+      <Header text="Anecdote of the day"/>
       <Anecdote anecdote={anecdotes[selected]} votes={points[selected]}/>
       <br/>
 
       <Button name="next anecdote" handleClick={nextSelected}/>
       <Button name="vote" handleClick={voteAnecdote}/>
+
+      <Header text="Anecdote with most votes"/>
+      <Anecdote anecdote={anecdotes[getMaxPointsIndex(points)]} votes={points[getMaxPointsIndex(points)]}/>
+
+
 
 
 
