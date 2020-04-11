@@ -49,7 +49,12 @@ const Statistics = ({good, neutral, bad}) =>
   }
 }
 
-const Anecdote = ({anecdote}) => <div><span>{anecdote}</span></div>;
+const Anecdote = ({anecdote, votes}) => 
+  <div>
+    <span>{anecdote}</span>
+    <br/>
+    <span>- {votes} votes -</span>
+  </div>;
 
 
 const App = () => {
@@ -62,6 +67,8 @@ const App = () => {
     'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.'
   ]
 
+  const initialPoints = [...anecdotes].map((a) => 0);
+
   const randomNumber = () => Math.round(Math.random() * anecdotes.length);
   
   const [good, setGood] = useState(0);
@@ -69,8 +76,14 @@ const App = () => {
   const [bad, setBad] = useState(0);
 
   const [selected, setSelected] = useState(randomNumber);
+  const [points, setPoints] = useState(initialPoints);
 
   const nextSelected = () => setSelected((selected + 1) % anecdotes.length); 
+  const voteAnecdote = () => {
+    const newPoints = [...points];
+    newPoints[selected]++;
+    setPoints(newPoints);
+  }
 
   const addGood = () => setGood(good + 1);
   const addNeutral = () => setNeutral(neutral + 1);
@@ -89,10 +102,11 @@ const App = () => {
       <br/>
       <br/>
       <br/>
-      <Anecdote anecdote={anecdotes[selected]}/>
+      <Anecdote anecdote={anecdotes[selected]} votes={points[selected]}/>
       <br/>
 
       <Button name="next anecdote" handleClick={nextSelected}/>
+      <Button name="vote" handleClick={voteAnecdote}/>
 
 
 
