@@ -23,6 +23,20 @@ const App = () => {
   const addNeutral = () => setNeutral(neutral + 1);
   const addBad = () => setBad(bad + 1);
 
+  const sum = data => data.reduce((a,b) => a + b, 0);
+  const average = (good, neutral, bad) => 
+  {
+    const calc = (good - bad) / (good + bad + neutral);
+    const result = calc ? calc : 0;
+    return result;
+  }
+
+  const pctgPositive = (good, data) => 
+  {
+    const calc = good/sum(data) * 100;
+    const result = calc ? calc : 0;
+    return result;
+  }
 
   return (
     <div>
@@ -35,6 +49,9 @@ const App = () => {
       <Statistic name="good" value={good}/>
       <Statistic name="neutral" value={neutral}/>
       <Statistic name="bad" value={bad}/>
+      <Statistic name="all" value={sum([good, neutral, bad])}/>
+      <Statistic name="average" value={average(good, neutral, bad)}/>
+      <Statistic name="positive" value={pctgPositive(good, [good, neutral, bad]) + " %"}/>
     </div>
   )
 }
