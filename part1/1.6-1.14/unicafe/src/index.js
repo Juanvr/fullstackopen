@@ -7,7 +7,7 @@ const Header = ({text}) =>
 const Button = ({name, handleClick}) => 
   <button onClick ={handleClick}>{name}</button>;
 
-const Statistic = ({name, value}) => 
+const Statistics = ({name, value}) => 
 <p>{name + ': ' + value}</p>;
 
 
@@ -46,12 +46,12 @@ const App = () => {
       <Button name="bad" handleClick={addBad}/>
 
       <Header text="statistics"/>
-      <Statistic name="good" value={good}/>
-      <Statistic name="neutral" value={neutral}/>
-      <Statistic name="bad" value={bad}/>
-      <Statistic name="all" value={sum([good, neutral, bad])}/>
-      <Statistic name="average" value={average(good, neutral, bad)}/>
-      <Statistic name="positive" value={pctgPositive(good, [good, neutral, bad]) + " %"}/>
+      <Statistics name="good" value={good}/>
+      <Statistics name="neutral" value={neutral}/>
+      <Statistics name="bad" value={bad}/>
+      <Statistics name="all" value={sum([good, neutral, bad])}/>
+      <Statistics name="average" value={average(good, neutral, bad)}/>
+      <Statistics name="positive" value={pctgPositive(good, [good, neutral, bad]) + " %"}/>
     </div>
   )
 }
