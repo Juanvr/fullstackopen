@@ -1,10 +1,7 @@
 import React, { useState } from 'react'
-
-const Contacts = ({contacts})=>
-  <div>
-    {contacts.map(contact => <div key={contact.name}>Name: {contact.name} Phone: {contact.phone}</div>)}
-  </div>
-;
+import Contacts from './components/Contacts'
+import Search from './components/Search'
+import NewContact from './components/NewContact'
 
 const App = () => {
   const [ contacts, setContacts] = useState([
@@ -25,8 +22,8 @@ const App = () => {
   const filterContacts = (contacts, searchText) => contacts.filter(a => a.name.toLowerCase().indexOf(searchText.toLowerCase())>-1);
 
   const searchInContacts = event => {
-    setSearchText(event.target.value);
     const text = event.target.value;
+    setSearchText(text);
     setShownContacts(filterContacts(contacts, text));
   }
 
@@ -45,19 +42,11 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      Search: <input onChange={searchInContacts}></input>
+      <Search searchFunction = {searchInContacts}/>
 
       <h3>New Contact</h3>
-      <form onSubmit={addContact}>
-        <div>
-          name: <input onChange={setNameFromInput}/>
-          <br/>
-          phone: <input onChange={setPhoneFromInput}/>
-        </div>
-        <div>
-          <button type="submit" >add</button>
-        </div>
-      </form>
+      <NewContact onSubmitFunction={addContact} onChangeNameFunction={setNameFromInput} onChangePhoneFunction={setPhoneFromInput}/>
+
       <h3>Numbers</h3>
       <Contacts contacts = {shownContacts}/>
     </div>
