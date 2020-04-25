@@ -1,20 +1,29 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Contacts from './components/Contacts'
 import Search from './components/Search'
 import NewContact from './components/NewContact'
+import axios from 'axios'
 
 const App = () => {
-  const [ contacts, setContacts] = useState([
-      { name: 'Arto Hellas', phone: '040-123456' },
-      { name: 'Ada Lovelace', phone: '39-44-5323523' },
-      { name: 'Dan Abramov', phone: '12-43-234345' },
-      { name: 'Mary Poppendieck', phone: '39-23-6423122' }
-  ]);
+  const [ contacts, setContacts] = useState([]);
   const [ newName, setNewName ] = useState('');
   const [ newPhone, setNewPhone ] = useState('');
 
   const [searchText, setSearchText] = useState('');
   const [shownContacts, setShownContacts] = useState(contacts);
+
+  useEffect(() => {
+    console.log('effect');
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled');
+        setContacts(response.data);
+        setShownContacts(response.data);
+        console.log(response.data);
+      })
+  }, []);
+
 
   const setNameFromInput = event => setNewName(event.target.value);
   const setPhoneFromInput = event => setNewPhone(event.target.value);
