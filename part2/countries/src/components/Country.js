@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Country = ({country}) =>
+const Country = ({country, searchByText}) =>
 {
   return (
     <div>

@@ -20,19 +20,21 @@ const App = () => {
   },[]);
 
   const filterCountries = (countries, searchText) => countries.filter(a => a.name.toLowerCase().indexOf(searchText.toLowerCase())>-1);
+
+  const searchByText = (text) => {
+    const filteredCountries = filterCountries(countries, text);
+    setSearchMatchCountries(filteredCountries);
+  }
   
   const search = ({target}) =>{
     const searchText = target.value;
-    const filteredCountries = filterCountries(countries, searchText);
-
-    setSearchMatchCountries(filteredCountries);
-
+    searchByText(searchText);
   }
 
   return (
     <div>
       <SearchBox onChange={search}/>
-      <SearchResult countries={searchMatchCountries} maxCountriesShownResult={10}/>
+      <SearchResult countries={searchMatchCountries} maxCountriesShownResult={10} searchByText={searchByText}/>
     </div>
   );
 }
