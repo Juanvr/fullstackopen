@@ -17,14 +17,12 @@ const App = () => {
     
     contactsService.getAll()
       .then(response => {
-        console.log('promise fulfilled');
         setContacts(response.data);
         setShownContacts(response.data);
         console.log(response.data);
       })
     
   }, []);
-
 
   const setNameFromInput = event => setNewName(event.target.value);
   const setPhoneFromInput = event => setNewPhone(event.target.value);
@@ -54,6 +52,22 @@ const App = () => {
     }
   }
 
+  const deleteContact = (contact) => {
+    if (window.confirm(`Delete ${contact.name}?`)) { 
+
+      contactsService.del(contact.id)
+      .then( () => 
+        {
+          contactsService.getAll()
+          .then(response => {
+            setContacts(response.data);
+            setShownContacts(filterContacts(response.data, searchText));
+          })
+        })
+     
+    }
+  }
+
   return (
     <div>
       <h1>Phonebook</h1>
@@ -62,8 +76,8 @@ const App = () => {
       <h3>New Contact</h3>
       <NewContact onSubmitFunction={addContact} onChangeNameFunction={setNameFromInput} onChangePhoneFunction={setPhoneFromInput}/>
 
-      <h3>Numbers</h3>
-      <Contacts contacts = {shownContacts}/>
+      <h3>Contacts</h3>
+      <Contacts contacts={shownContacts} deleteContact={deleteContact}/>
     </div>
   )
 }
