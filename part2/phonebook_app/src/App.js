@@ -115,8 +115,8 @@ const App = () => {
         return response;
       })
       .catch( error => {
-        console.log(error);
-        showNotification(error.message, true);
+        const message = `Could not delete ${contact.name} from contact list, it may have already been deleted. ${error.message} `;
+        showNotification(message, true);
       });
      
     }
