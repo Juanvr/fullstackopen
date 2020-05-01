@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Contacts from './components/Contacts'
 import Search from './components/Search'
 import NewContact from './components/NewContact'
-import axios from 'axios'
+import contactsService from './services/contacts'
 
 const App = () => {
   const [ contacts, setContacts] = useState([]);
@@ -14,14 +14,15 @@ const App = () => {
 
   useEffect(() => {
     console.log('effect');
-    axios
-      .get('http://localhost:3001/persons')
+    
+    contactsService.getAll()
       .then(response => {
         console.log('promise fulfilled');
         setContacts(response.data);
         setShownContacts(response.data);
         console.log(response.data);
       })
+    
   }, []);
 
 
@@ -43,8 +44,7 @@ const App = () => {
       alert(`${newName} is already added to phonebook`);
     }else{
 
-      axios
-        .post('http://localhost:3001/persons', {name:newName, phone: newPhone})
+      contactsService.create({name:newName, phone: newPhone})
         .then( response => 
           {
             const newContacts = contacts.concat(response.data);
