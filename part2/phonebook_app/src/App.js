@@ -3,6 +3,8 @@ import Contacts from './components/Contacts'
 import Search from './components/Search'
 import NewContact from './components/NewContact'
 import contactsService from './services/contacts'
+import Notification from './components/Notification'
+
 
 const App = () => {
   const [ contacts, setContacts] = useState([]);
@@ -11,6 +13,7 @@ const App = () => {
 
   const [searchText, setSearchText] = useState('');
   const [shownContacts, setShownContacts] = useState(contacts);
+  const [notification, setNotification] = useState({message:null, error: false});
 
   useEffect(() => {
     console.log('effect');
@@ -35,6 +38,15 @@ const App = () => {
     setShownContacts(filterContacts(contacts, text));
   }
 
+  const showNotification = (message, error) => {
+    setNotification(
+      {message, error}
+    );
+    setTimeout(() => {
+      setNotification({message: null, error: false})
+    }, 5000);
+  }
+
   const addContact = event => {
     event.preventDefault();
 
@@ -53,7 +65,16 @@ const App = () => {
             const newContacts = contacts.map(item => item.id !== response.data.id? item:response.data);
             setContacts(newContacts);
             setShownContacts(filterContacts(newContacts, searchText));
+            return response;
           })
+        .then( response => {
+          const message = `${response.data.name} modified in contact list`;
+          showNotification(message, false);
+          return response;
+        })
+        .catch( error => {
+          showNotification(error.message, true);
+        });
       }
     }else{
 
@@ -63,7 +84,16 @@ const App = () => {
             const newContacts = contacts.concat(response.data);
             setContacts(newContacts);
             setShownContacts(filterContacts(newContacts, searchText));
+            return response;
           })
+        .then( response => {
+          const message = `${response.data.name} added to contact list`;
+          showNotification(message, false);
+          return response;
+        })
+        .catch( error => {
+          showNotification(error.message, true);
+        });
     }
   }
 
@@ -79,12 +109,22 @@ const App = () => {
             setShownContacts(filterContacts(response.data, searchText));
           })
         })
+      .then( response => {
+        const message = `${contact.name} deleted from contact list`;
+        showNotification(message, false);
+        return response;
+      })
+      .catch( error => {
+        console.log(error);
+        showNotification(error.message, true);
+      });
      
     }
   }
 
   return (
     <div>
+      <Notification notification={notification}/>
       <h1>Phonebook</h1>
       <Search searchFunction = {searchInContacts}/>
 
