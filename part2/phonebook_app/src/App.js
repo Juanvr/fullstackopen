@@ -42,9 +42,15 @@ const App = () => {
     if (contacts.map(a => a.name).indexOf(newName) > -1){
       alert(`${newName} is already added to phonebook`);
     }else{
-      const newContacts = contacts.concat({name:newName, phone: newPhone});
-      setContacts(newContacts);
-      setShownContacts(filterContacts(newContacts, searchText));
+
+      axios
+        .post('http://localhost:3001/persons', {name:newName, phone: newPhone})
+        .then( response => 
+          {
+            const newContacts = contacts.concat(response.data);
+            setContacts(newContacts);
+            setShownContacts(filterContacts(newContacts, searchText));
+          })
     }
   }
 
