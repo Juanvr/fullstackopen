@@ -2,11 +2,18 @@ import React from 'react'
 
 const NewContact = ({onSubmitFunction, onChangeNameFunction, onChangePhoneFunction}) =>
 <form onSubmit={onSubmitFunction}>
-<div>
-  name: <input onChange={onChangeNameFunction}/>
-  <br/>
-  phone: <input onChange={onChangePhoneFunction}/>
-</div>
+<table>
+  <tbody>
+    <tr>
+      <td>Name:</td>
+      <td><input onChange={onChangeNameFunction}/></td>
+    </tr>
+    <tr>
+      <td>Phone:</td>
+      <td><input onChange={onChangePhoneFunction}/></td>
+    </tr>
+  </tbody>
+</table>
 <div>
   <button type="submit" >add</button>
 </div>

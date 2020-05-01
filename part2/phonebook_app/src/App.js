@@ -38,8 +38,23 @@ const App = () => {
   const addContact = event => {
     event.preventDefault();
 
-    if (contacts.map(a => a.name).indexOf(newName) > -1){
-      alert(`${newName} is already added to phonebook`);
+    const foundContacts = contacts.filter(a => a.name === newName);
+    const foundContact=foundContacts[0];
+    if (foundContact){
+
+      if (window.confirm(`Change contact ${newName}?`)) { 
+        contactsService.update(
+          foundContact.id,
+          {...foundContact, phone:newPhone}
+        )
+        .then( response => 
+          {
+            console.log(response);
+            const newContacts = contacts.map(item => item.id !== response.data.id? item:response.data);
+            setContacts(newContacts);
+            setShownContacts(filterContacts(newContacts, searchText));
+          })
+      }
     }else{
 
       contactsService.create({name:newName, phone: newPhone})
