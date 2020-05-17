@@ -30,7 +30,10 @@ const App = () => {
   const setNameFromInput = event => setNewName(event.target.value);
   const setPhoneFromInput = event => setNewPhone(event.target.value);
 
-  const filterContacts = (contacts, searchText) => contacts.filter(a => a.name.toLowerCase().indexOf(searchText.toLowerCase())>-1);
+  const filterContacts = (contacts, searchText) => 
+      contacts.filter(a => 
+        a.name.toLowerCase().indexOf(searchText.toLowerCase())>-1
+      );
 
   const searchInContacts = event => {
     const text = event.target.value;
@@ -52,68 +55,75 @@ const App = () => {
 
     const foundContacts = contacts.filter(a => a.name === newName);
     const foundContact=foundContacts[0];
-    if (foundContact){
 
-      if (window.confirm(`Change contact ${newName}?`)) { 
-        contactsService.update(
-          foundContact.id,
-          {...foundContact, phone:newPhone}
-        )
-        .then( response => 
-          {
-            console.log(response);
-            const newContacts = contacts.map(item => item.id !== response.data.id? item:response.data);
-            setContacts(newContacts);
-            setShownContacts(filterContacts(newContacts, searchText));
-            return response;
-          })
-        .then( response => {
-          const message = `${response.data.name} modified in contact list`;
-          showNotification(message, false);
-          return response;
-        })
-        .catch( error => {
-          showNotification(error.message, true);
-        });
-      }
-    }else{
 
+    if (!foundContact){
       contactsService.create({name:newName, phone: newPhone})
-        .then( response => 
-          {
-            const newContacts = contacts.concat(response.data);
-            setContacts(newContacts);
-            setShownContacts(filterContacts(newContacts, searchText));
-            return response;
-          })
-        .then( response => {
-          const message = `${response.data.name} added to contact list`;
-          showNotification(message, false);
+      .then( response => 
+        {
+          const newContacts = contacts.concat(response.data);
+          setContacts(newContacts);
+          setShownContacts(filterContacts(newContacts, searchText));
           return response;
         })
-        .catch( error => {
-          showNotification(error.message, true);
-        });
+      .then( response => {
+        const message = `${response.data.name} added to contact list`;
+        showNotification(message, false);
+        return response;
+      })
+      .catch( error => {
+        console.error(error.response.data.message);
+        showNotification(error.response.data.message, true);
+      });
+      return;
+    } 
+
+    if (window.confirm(`Change contact ${newName}?`)) { 
+      contactsService.update(
+        foundContact.id,
+        {...foundContact, phone:newPhone}
+      )
+      .then( response => 
+        {
+          console.log("front-response:",response);
+          const newContacts = contacts.map(item => item.id !== response.data.id? item:response.data);
+          setContacts(newContacts);
+          setShownContacts(filterContacts(newContacts, searchText));
+          return response;
+        })
+      .then( response => {
+        const message = `${response.data.name} modified in contact list`;
+        showNotification(message, false);
+        return response;
+      })
+      .catch( error => {
+        console.error(error.response.data.message);
+        showNotification(error.response.data.message, true);
+      });
     }
+  
   }
 
   const deleteContact = (contact) => {
     if (window.confirm(`Delete ${contact.name}?`)) { 
+      console.log(contact);
 
       contactsService.del(contact.id)
-      .then( () => 
+      .then( (response) => 
         {
-          contactsService.getAll()
-          .then(response => {
-            setContacts(response.data);
-            setShownContacts(filterContacts(response.data, searchText));
-          })
+          if (response.status === 200){
+            contactsService.getAll()
+            .then(response => {
+              setContacts(response.data);
+              setShownContacts(filterContacts(response.data, searchText));
+              const message = `${contact.name} deleted from contact list`;
+              showNotification(message, false);
+            })
+          } else {
+            const message = `Could not delete ${contact.name} from contact list, it may have already been deleted.`;
+            showNotification(message, true);
+          }
         })
-      .then( response => {
-        const message = `${contact.name} deleted from contact list`;
-        showNotification(message, false);
-        return response;
-      })
       .catch( error => {
         const message = `Could not delete ${contact.name} from contact list, it may have already been deleted. ${error.message} `;
         showNotification(message, true);
